@@ -5,59 +5,109 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { useWaranStore } from "@/lib/store";
 
-// TOGGLE FLAG: Set to false to revert back to sphere core if needed
-const USE_LOGO_CORE = false;
+// NEUTRON STAR & SOLAR FLARE NUCLEUS COMPONENT
+function NeutronSolarCore({ activePulse, onClick }: { activePulse: boolean; onClick: (e: any) => void }) {
+  const coreRef = useRef<THREE.Mesh>(null);
+  const coronaRef = useRef<THREE.Mesh>(null);
+  const flareGroupRef = useRef<THREE.Group>(null);
+  const lightRef = useRef<THREE.PointLight>(null);
 
-function LogoCore({ activePulse, onClick }: { activePulse: boolean; onClick: (e: any) => void }) {
-  const logoTexture = useLoader(THREE.TextureLoader, "/brand/logo.png");
-  const meshRef = useRef<THREE.Mesh>(null);
-  const glowRef = useRef<THREE.PointLight>(null);
+  // 1. Generate Solar Flare Arcs / Magnetic Plasma Prominences
+  const flareCurves = useMemo(() => {
+    const curves: THREE.CatmullRomCurve3[] = [];
+    const count = 6;
+    for (let i = 0; i < count; i++) {
+      const angle = (i * Math.PI * 2) / count;
+      const height = 0.45 + (i % 3) * 0.12;
+      const spread = 0.22;
 
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-    if (meshRef.current) {
-      // Gentle floating pulse & orientation
-      const pulseScale = 1 + Math.sin(time * 2) * (activePulse ? 0.3 : 0.05);
-      meshRef.current.scale.setScalar(pulseScale);
+      const p0 = new THREE.Vector3(Math.cos(angle) * 0.15, Math.sin(angle) * 0.15, 0);
+      const p1 = new THREE.Vector3(Math.cos(angle) * height, Math.sin(angle) * height, (i % 2 === 0 ? 1 : -1) * spread);
+      const p2 = new THREE.Vector3(Math.cos(angle + 0.4) * 0.15, Math.sin(angle + 0.4) * 0.15, 0);
+
+      curves.push(new THREE.CatmullRomCurve3([p0, p1, p2]));
     }
-    if (glowRef.current) {
-      glowRef.current.intensity = activePulse
-        ? 4.5
-        : 2.2 + Math.sin(time * 2) * 0.5;
+    return curves;
+  }, []);
+
+  const flareTubes = useMemo(() => {
+    return flareCurves.map((curve) => new THREE.TubeGeometry(curve, 32, 0.012, 8, false));
+  }, [flareCurves]);
+
+  useFrame((state, delta) => {
+    const time = state.clock.getElapsedTime();
+
+    // 1. Neutron Core Pulsar Rotation & Scale Breathing
+    if (coreRef.current) {
+      coreRef.current.rotation.y += delta * 0.5;
+      const pulseScale = 1 + Math.sin(time * 3) * (activePulse ? 0.35 : 0.06);
+      coreRef.current.scale.setScalar(pulseScale);
+    }
+
+    // 2. Solar Corona Atmospheric Volume Breathing
+    if (coronaRef.current) {
+      coronaRef.current.rotation.z -= delta * 0.3;
+      const coronaScale = 1 + Math.sin(time * 2.2 + 1) * (activePulse ? 0.4 : 0.08);
+      coronaRef.current.scale.setScalar(coronaScale);
+    }
+
+    // 3. Counter-rotating Solar Flare Eruptions
+    if (flareGroupRef.current) {
+      flareGroupRef.current.rotation.z += delta * 0.4;
+      flareGroupRef.current.rotation.x = Math.sin(time * 1.5) * 0.2;
+    }
+
+    // 4. Intense Incandescent Light Intensity
+    if (lightRef.current) {
+      lightRef.current.intensity = activePulse
+        ? 6.0
+        : 2.8 + Math.sin(time * 3.5) * 0.6;
     }
   });
 
   return (
     <group onClick={onClick}>
-      {/* VIBRANT GOLDEN GLOW LIGHT */}
-      <pointLight ref={glowRef} color="#C5A059" intensity={2.2} distance={8} />
-      <pointLight color="#FFE5A3" intensity={1.5} distance={4} />
+      {/* INTENSE NEUTRON LIGHT SOURCE */}
+      <pointLight ref={lightRef} color="#FFD700" intensity={2.8} distance={10} />
+      <pointLight color="#FFF" intensity={2.0} distance={4} />
 
-      {/* GLOWING BACKPLANE AURA */}
-      <mesh position={[0, 0, -0.01]}>
-        <planeGeometry args={[0.75, 0.75]} />
+      {/* 1. CENTRAL INCANDESCENT NEUTRON CORE */}
+      <mesh ref={coreRef}>
+        <sphereGeometry args={[0.2, 32, 32]} />
+        <meshStandardMaterial
+          color="#FFF7E6"
+          metalness={0.1}
+          roughness={0.05}
+          emissive="#FFC857"
+          emissiveIntensity={activePulse ? 3.0 : 1.6}
+        />
+      </mesh>
+
+      {/* 2. SOLAR CORONA TRANSLUCENT ATMOSPHERIC SPHERE */}
+      <mesh ref={coronaRef}>
+        <sphereGeometry args={[0.32, 32, 32]} />
         <meshBasicMaterial
           color="#C5A059"
           transparent
-          opacity={activePulse ? 0.85 : 0.45}
+          opacity={activePulse ? 0.6 : 0.3}
           side={THREE.DoubleSide}
         />
       </mesh>
 
-      {/* 3D WARAN LOGO EMBLEM (FRONT) */}
-      <mesh ref={meshRef} position={[0, 0, 0]}>
-        <planeGeometry args={[0.65, 0.65]} />
-        <meshStandardMaterial
-          map={logoTexture}
-          transparent
-          alphaTest={0.05}
-          metalness={0.9}
-          roughness={0.1}
-          emissive="#C5A059"
-          emissiveIntensity={activePulse ? 0.8 : 0.35}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
+      {/* 3. MAGNETIC SOLAR FLARE ARCS / PLASMA LOOPS */}
+      <group ref={flareGroupRef}>
+        {flareTubes.map((geo, idx) => (
+          <mesh key={idx} geometry={geo}>
+            <meshStandardMaterial
+              color="#FFD073"
+              emissive="#FF9900"
+              emissiveIntensity={activePulse ? 3.5 : 1.8}
+              transparent
+              opacity={0.85}
+            />
+          </mesh>
+        ))}
+      </group>
     </group>
   );
 }
@@ -244,22 +294,8 @@ export function HelixMark({ scale = 1.25 }: { scale?: number }) {
         })}
       </group>
 
-      {/* CENTRAL CORE: VIBRANT GLOWING LOGO EMBLEM OR SPHERE NUCLEUS */}
-      {USE_LOGO_CORE ? (
-        <LogoCore activePulse={activePulse} onClick={handleCoreClick} />
-      ) : (
-        <mesh ref={coreRef} onClick={handleCoreClick}>
-          <sphereGeometry args={[0.18, 32, 32]} />
-          <meshStandardMaterial
-            color="#C5A059"
-            metalness={0.95}
-            roughness={0.1}
-            emissive="#C5A059"
-            emissiveIntensity={activePulse ? 1.2 : 0.4}
-          />
-          <pointLight ref={coreLightRef} color="#C5A059" intensity={1.2} distance={6} />
-        </mesh>
-      )}
+      {/* CENTRAL CORE: HIGH-ENERGY NEUTRON STAR & SOLAR FLARE NUCLEUS */}
+      <NeutronSolarCore activePulse={activePulse} onClick={handleCoreClick} />
 
       {/* ABSTRACT ORBITAL COORDINATE RINGS */}
       <group ref={orbit1} rotation={[Math.PI / 2.2, 0, 0]}>
