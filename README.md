@@ -1,5 +1,6 @@
 # ⚔️ WARAN INDUSTRIES — FRONTIER AI DIGITAL HEADQUARTERS & ENTERPRISE CAREERS PLATFORM
 
+> **Live Website:** [https://waran.vercel.app](https://waran.vercel.app)  
 > **Official Repository:** `https://github.com/lokeshwaran233-commits/waran-industriesAI`  
 > **Architecture:** Next.js 14 App Router · React 18 · Three.js / React Three Fiber · GSAP · Zustand · TailwindCSS  
 > **Aesthetic Signature:** Tier-1 AI Institutional · Procedural 3D WebGL Worlds · Space Grotesk & Plus Jakarta Sans Typography · Restrained Metallic Gold (`#C5A059`) Accents  

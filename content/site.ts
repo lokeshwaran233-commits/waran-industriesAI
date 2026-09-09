@@ -1,7 +1,7 @@
 export const site = {
   name: "WARAN Industries",
   legalName: "WARAN Industries",
-  url: "https://waran.industries",
+  url: "https://waran.vercel.app",
   locale: "en",
   description:
     "WARAN Industries is a long-horizon technology, science, capital and exploration organization. It begins with WARAN PRIMAL: AI-native software that turns operational bottlenecks into scalable systems, while building toward advanced technology, life science, exploration and space robotics.",
