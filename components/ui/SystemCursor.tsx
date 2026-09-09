@@ -7,11 +7,13 @@ export function SystemCursor() {
   const cursorMode = useWaranStore((s) => s.cursorMode);
   const reducedMotion = useWaranStore((s) => s.reducedMotion);
 
+  const [mounted, setMounted] = useState(false);
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const [visible, setVisible] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Detect touch-only devices
     if (window.matchMedia("(pointer: coarse)").matches) {
       setIsTouchDevice(true);
@@ -37,7 +39,7 @@ export function SystemCursor() {
     };
   }, [visible]);
 
-  if (isTouchDevice || reducedMotion || !visible) return null;
+  if (!mounted || isTouchDevice || reducedMotion || !visible) return null;
 
   return (
     <div
