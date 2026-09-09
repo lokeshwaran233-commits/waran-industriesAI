@@ -1,0 +1,81 @@
+export const site = {
+  name: "WARAN Industries",
+  legalName: "WARAN Industries",
+  url: "https://waran.industries",
+  locale: "en",
+  description:
+    "WARAN Industries is a long-horizon technology, science, capital and exploration organization. It begins with WARAN PRIMAL: AI-native software that turns operational bottlenecks into scalable systems, while building toward advanced technology, life science, exploration and space robotics.",
+  tagline: "Innovation. Exploration. A better tomorrow.",
+  northStar: "Expanding human capability.",
+  philosophy: [
+    "Build what humanity needs.",
+    "Explore what humanity does not yet understand.",
+    "Develop the technology required to go farther.",
+    "Reinvest discovery and capability into the next frontier.",
+  ],
+  hero: {
+    kicker: "Digital headquarters",
+    title: ["WARAN", "INDUSTRIES"],
+    statement: "Innovation / Exploration / A better tomorrow",
+    supporting: "Expanding human capability.",
+    now: "Today, WARAN PRIMAL builds AI-native software.",
+    toward: "The remaining divisions are planned capabilities, not operating claims.",
+  },
+  contact: {
+    email: "waranindustriesai@gmail.com",
+    linkedin: "https://www.linkedin.com/in/waran-industries",
+  },
+  navigation: [
+    { href: "/", label: "WARAN" },
+    { href: "/#divisions", label: "Divisions" },
+    { href: "/frontier", label: "Frontier" },
+    { href: "/about", label: "About" },
+    { href: "/research", label: "Research" },
+    { href: "/careers", label: "Careers" },
+    { href: "/contact", label: "Contact" },
+  ],
+  ctas: [
+    { href: "/divisions/primal", label: "Build with WARAN", kind: "now" },
+    { href: "/research", label: "Research with WARAN", kind: "building" },
+    { href: "/frontier", label: "Explore with WARAN", kind: "frontier" },
+    { href: "/contact", label: "Partner with WARAN", kind: "future" },
+  ],
+  horizons: [
+    {
+      id: "now",
+      label: "Now",
+      title: "WARAN PRIMAL",
+      body: "The first operating frontier. AI-native software, workflow intelligence and enterprise systems.",
+    },
+    {
+      id: "building",
+      label: "Building",
+      title: "TECH · SCIENCES · CAPITAL",
+      body: "Capability layers being designed so software can fund, inform and eventually become deeper technology, science and capital intelligence.",
+    },
+    {
+      id: "frontier",
+      label: "Frontier",
+      title: "WARAN EXPLORATION",
+      body: "A planned professional expedition architecture: trained teams, scientific protocol, safety and field operations.",
+    },
+    {
+      id: "future",
+      label: "Future",
+      title: "WARAN SPACE",
+      body: "A long-range robotics-first objective beyond Earth. Not an operating space program.",
+    },
+  ],
+  flywheel: [
+    "PRIMAL creates operational value and reusable software infrastructure.",
+    "CAPITAL is intended to allocate that value toward long-horizon capability.",
+    "TECH and SCIENCES convert capital and insight into machines, computation and biological understanding.",
+    "EXPLORATION generates knowledge that laboratories and software cannot produce alone.",
+    "SPACE is the eventual expansion of that same operating logic beyond Earth.",
+    "Discovery returns as new capability, new software, and a larger WARAN.",
+  ],
+  honesty: {
+    title: "What exists. What does not.",
+    body: "WARAN is beginning. The site describes a real operating intent and a long-horizon architecture. It does not invent customers, revenue, patents, laboratories, missions, space operations, partnerships or certifications.",
+  },
+} as const;
