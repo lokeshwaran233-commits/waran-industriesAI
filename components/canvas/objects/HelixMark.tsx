@@ -116,13 +116,13 @@ export function HelixMark({ scale = 1.25 }: { scale?: number }) {
     // Core light & pulse (with Session Memory boost if sections explored)
     const memoryBoost = exploredSections.length > 0 ? 0.3 : 0;
     if (coreRef.current) {
-      const pulseScale = 1 + Math.sin(time * 1.5) * (activePulse || isResearchHover ? 0.35 : 0.05) + memoryBoost * 0.1;
+      const pulseScale = 1 + Math.sin(time * 1.5) * (activePulse || isResearchHover ? 0.35 : 0.08) + memoryBoost * 0.1;
       coreRef.current.scale.setScalar(pulseScale);
     }
     if (coreLightRef.current) {
       coreLightRef.current.intensity = activePulse || isResearchHover
-        ? 4.5
-        : 1.4 + Math.sin(time * 1.5) * 0.3 + memoryBoost * 0.5;
+        ? 6.0
+        : 2.5 + Math.sin(time * 1.5) * 0.5 + memoryBoost * 0.5;
     }
   });
 
@@ -185,17 +185,17 @@ export function HelixMark({ scale = 1.25 }: { scale?: number }) {
         })}
       </group>
 
-      {/* CENTRAL CORE: CLEAN ELEGANT GOLDEN METALLIC SPHERE NUCLEUS */}
+      {/* CENTRAL CORE: ELEVATED LUMINESCENT GOLD SPHERE NUCLEUS */}
       <mesh ref={coreRef} onClick={handleCoreClick}>
         <sphereGeometry args={[0.18, 32, 32]} />
         <meshStandardMaterial
           color="#C5A059"
-          metalness={0.95}
-          roughness={0.1}
-          emissive="#C5A059"
-          emissiveIntensity={activePulse ? 1.2 : 0.4}
+          metalness={0.98}
+          roughness={0.06}
+          emissive="#FFC857"
+          emissiveIntensity={activePulse ? 2.2 : 1.0}
         />
-        <pointLight ref={coreLightRef} color="#C5A059" intensity={1.4} distance={6} />
+        <pointLight ref={coreLightRef} color="#FFE5A3" intensity={2.2} distance={6} />
       </mesh>
 
       {/* ABSTRACT ORBITAL COORDINATE RINGS */}
