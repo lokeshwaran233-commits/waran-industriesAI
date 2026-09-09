@@ -29,6 +29,9 @@ export function SiteNav() {
   const progress = useWaranStore((s) => s.progress);
   const menuOpen = useWaranStore((s) => s.menuOpen);
   const setMenuOpen = useWaranStore((s) => s.setMenuOpen);
+  const setCursorMode = useWaranStore((s) => s.setCursorMode);
+  const setHoveredNavSection = useWaranStore((s) => s.setHoveredNavSection);
+  const markSectionExplored = useWaranStore((s) => s.markSectionExplored);
   const current = scenes.find((s) => s.id === sceneId);
   const chapter = pathname === "/" ? frontierLabel[sceneId] : pathname.split("/").filter(Boolean).at(-1)?.toUpperCase();
 
@@ -38,7 +41,18 @@ export function SiteNav() {
         <Link
           href="/"
           className="pointer-events-auto group flex items-center gap-4 text-waran-paper"
-          onClick={() => setMenuOpen(false)}
+          onMouseEnter={() => {
+            setCursorMode("interactive");
+            setHoveredNavSection("SIGNAL");
+          }}
+          onMouseLeave={() => {
+            setCursorMode("default");
+            setHoveredNavSection(null);
+          }}
+          onClick={() => {
+            setMenuOpen(false);
+            markSectionExplored("SIGNAL");
+          }}
         >
           <WaranMark gold className="h-12 w-12 transition-transform duration-500 group-hover:scale-105" />
           <span className="leading-none">
@@ -54,7 +68,16 @@ export function SiteNav() {
             <Link
               key={item.href}
               href={item.href}
+              onMouseEnter={() => {
+                setCursorMode("node");
+                setHoveredNavSection(item.label.toUpperCase());
+              }}
+              onMouseLeave={() => {
+                setCursorMode("default");
+                setHoveredNavSection(null);
+              }}
               onClick={(e) => {
+                markSectionExplored(item.label.toUpperCase());
                 if (item.href.includes("#")) {
                   const targetId = item.href.split("#")[1];
                   const el = document.getElementById(targetId);

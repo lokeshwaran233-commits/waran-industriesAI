@@ -62,8 +62,9 @@ function LogoCore({ activePulse, onClick }: { activePulse: boolean; onClick: (e:
   );
 }
 
-export function HelixMark({ scale = 1 }: { scale?: number }) {
+export function HelixMark({ scale = 1.25 }: { scale?: number }) {
   const group = useRef<THREE.Group>(null);
+  const strandsGroup = useRef<THREE.Group>(null);
   const coreRef = useRef<THREE.Mesh>(null);
   const coreLightRef = useRef<THREE.PointLight>(null);
   const orbit1 = useRef<THREE.Group>(null);
@@ -71,6 +72,11 @@ export function HelixMark({ scale = 1 }: { scale?: number }) {
   const orbit3 = useRef<THREE.Group>(null);
 
   const [activePulse, setActivePulse] = useState(false);
+
+  // Subscribe to Zustand store states
+  const hoveredNavSection = useWaranStore((s) => s.hoveredNavSection);
+  const progress = useWaranStore((s) => s.progress);
+  const exploredSections = useWaranStore((s) => s.exploredSections);
 
   // 1. Dual Strand Double-Helix Geometry
   const curveA = useMemo(() => {
@@ -125,25 +131,57 @@ export function HelixMark({ scale = 1 }: { scale?: number }) {
   useFrame((state, delta) => {
     const reduced = useWaranStore.getState().reducedMotion;
     const time = state.clock.getElapsedTime();
+    const { pointer } = state;
 
-    // Slow, continuous, elegant Y-axis rotation
     if (group.current) {
-      group.current.rotation.y += reduced ? 0 : delta * 0.12;
+      // 1. Organic Y-axis continuous rotation with mouse parallax
+      group.current.rotation.y += reduced ? 0 : delta * 0.14;
+
+      // Mouse Parallax displacement (Subtle & Precision)
+      const targetParallaxX = pointer.x * 0.35;
+      const targetParallaxY = pointer.y * 0.25;
+      group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, targetParallaxY * 0.2, 0.05);
+      group.current.position.x = THREE.MathUtils.lerp(group.current.position.x, targetParallaxX * 0.4, 0.05);
+
+      // 2. Scroll Journey Transformation (DNA -> System Network)
+      // As progress moves 0 -> 0.3, DNA transforms into system architecture
+      const scrollSeparation = Math.min(progress * 2.5, 1);
+      if (strandsGroup.current) {
+        strandsGroup.current.position.z = THREE.MathUtils.lerp(strandsGroup.current.position.z, -scrollSeparation * 1.5, 0.08);
+      }
     }
 
-    // Counter-rotating Orbital Coordinate Rings
-    if (orbit1.current) orbit1.current.rotation.z += delta * 0.08;
-    if (orbit2.current) orbit2.current.rotation.x += delta * -0.05;
-    if (orbit3.current) orbit3.current.rotation.y += delta * 0.06;
+    // 3. Semantic Hover Reactions
+    // Hover DIVISIONS -> Strands expand/branch
+    const isDivisionsHover = hoveredNavSection === "DIVISIONS";
+    const isResearchHover = hoveredNavSection === "RESEARCH";
+    const isFrontierHover = hoveredNavSection === "FRONTIER";
 
-    if (!USE_LOGO_CORE) {
-      if (coreRef.current) {
-        const pulseScale = 1 + Math.sin(time * 1.5) * (activePulse ? 0.25 : 0.03);
-        coreRef.current.scale.setScalar(pulseScale);
-      }
-      if (coreLightRef.current) {
-        coreLightRef.current.intensity = activePulse ? 3.5 : 1.2 + Math.sin(time * 1.5) * 0.25;
-      }
+    // Counter-rotating Orbital Coordinate Rings
+    const orbitScale = isFrontierHover ? 1.45 : 1.0;
+    if (orbit1.current) {
+      orbit1.current.rotation.z += delta * (isDivisionsHover ? 0.25 : 0.08);
+      orbit1.current.scale.setScalar(THREE.MathUtils.lerp(orbit1.current.scale.x, orbitScale, 0.08));
+    }
+    if (orbit2.current) {
+      orbit2.current.rotation.x += delta * (isDivisionsHover ? -0.2 : -0.05);
+      orbit2.current.scale.setScalar(THREE.MathUtils.lerp(orbit2.current.scale.x, orbitScale * 1.1, 0.08));
+    }
+    if (orbit3.current) {
+      orbit3.current.rotation.y += delta * (isDivisionsHover ? 0.22 : 0.06);
+      orbit3.current.scale.setScalar(THREE.MathUtils.lerp(orbit3.current.scale.x, orbitScale * 1.2, 0.08));
+    }
+
+    // Core light & pulse (with Session Memory boost if sections explored)
+    const memoryBoost = exploredSections.length > 0 ? 0.3 : 0;
+    if (coreRef.current) {
+      const pulseScale = 1 + Math.sin(time * 1.5) * (activePulse || isResearchHover ? 0.35 : 0.05) + memoryBoost * 0.1;
+      coreRef.current.scale.setScalar(pulseScale);
+    }
+    if (coreLightRef.current) {
+      coreLightRef.current.intensity = activePulse || isResearchHover
+        ? 4.5
+        : 1.4 + Math.sin(time * 1.5) * 0.3 + memoryBoost * 0.5;
     }
   });
 
@@ -163,45 +201,48 @@ export function HelixMark({ scale = 1 }: { scale?: number }) {
         <pointsMaterial size={0.025} color="#C5A059" transparent opacity={0.35} sizeAttenuation />
       </points>
 
-      {/* Strand A: Muted Gold Metallic Material */}
-      <mesh geometry={tubeA}>
-        <meshStandardMaterial
-          color="#C5A059"
-          metalness={0.92}
-          roughness={0.18}
-          emissive="#3a2a10"
-          emissiveIntensity={0.25}
-        />
-      </mesh>
+      {/* DUAL DNA STRANDS & RUNG STRUCTURE */}
+      <group ref={strandsGroup}>
+        {/* Strand A: Muted Gold Metallic Material */}
+        <mesh geometry={tubeA}>
+          <meshStandardMaterial
+            color="#C5A059"
+            metalness={0.92}
+            roughness={0.18}
+            emissive="#3a2a10"
+            emissiveIntensity={0.25}
+          />
+        </mesh>
 
-      {/* Strand B: Cool Silver Metallic Material */}
-      <mesh geometry={tubeB}>
-        <meshStandardMaterial
-          color="#E8E2D4"
-          metalness={0.88}
-          roughness={0.22}
-          emissive="#1b2028"
-          emissiveIntensity={0.2}
-        />
-      </mesh>
+        {/* Strand B: Cool Silver Metallic Material */}
+        <mesh geometry={tubeB}>
+          <meshStandardMaterial
+            color="#E8E2D4"
+            metalness={0.88}
+            roughness={0.22}
+            emissive="#1b2028"
+            emissiveIntensity={0.2}
+          />
+        </mesh>
 
-      {/* Nucleotide Base-Pair Connecting Rungs */}
-      {rungs.map((rung, i) => {
-        const mid = new THREE.Vector3().addVectors(rung.p1, rung.p2).multiplyScalar(0.5);
-        const dist = rung.p1.distanceTo(rung.p2);
-        return (
-          <mesh key={i} position={mid}>
-            <cylinderGeometry args={[0.01, 0.01, dist, 8]} />
-            <meshStandardMaterial
-              color={i % 2 === 0 ? "#C5A059" : "#9AA4B2"}
-              metalness={0.8}
-              roughness={0.3}
-              transparent
-              opacity={0.6}
-            />
-          </mesh>
-        );
-      })}
+        {/* Nucleotide Base-Pair Connecting Rungs */}
+        {rungs.map((rung, i) => {
+          const mid = new THREE.Vector3().addVectors(rung.p1, rung.p2).multiplyScalar(0.5);
+          const dist = rung.p1.distanceTo(rung.p2);
+          return (
+            <mesh key={i} position={mid}>
+              <cylinderGeometry args={[0.01, 0.01, dist, 8]} />
+              <meshStandardMaterial
+                color={i % 2 === 0 ? "#C5A059" : "#9AA4B2"}
+                metalness={0.8}
+                roughness={0.3}
+                transparent
+                opacity={0.6}
+              />
+            </mesh>
+          );
+        })}
+      </group>
 
       {/* CENTRAL CORE: VIBRANT GLOWING LOGO EMBLEM OR SPHERE NUCLEUS */}
       {USE_LOGO_CORE ? (
