@@ -11,7 +11,7 @@ export const scenes: Scene[] = [
     title: "The digital headquarters of a long-horizon industrial organization.",
     lines: ["INNOVATION", "EXPLORATION", "A BETTER TOMORROW"],
     body: "Beginning today. Architected for decades.",
-    camera: { position: [0, 1.2, 8.5], target: [0, 0.4, 0], fov: 38 },
+    camera: { position: [-1.2, 1.2, 7.5], target: [1.2, 0.2, 0], fov: 38 },
   },
   {
     id: "question",

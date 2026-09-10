@@ -8,15 +8,28 @@ import { useWaranStore } from "@/lib/store";
 
 export function SceneCopy() {
   const sceneId = useWaranStore((s) => s.sceneId);
+  const progress = useWaranStore((s) => s.progress);
   const reducedMotion = useWaranStore((s) => s.reducedMotion);
   const scene = scenes.find((s) => s.id === sceneId) ?? scenes[0];
 
+  // Calculate local progress for smooth fade-out as user scrolls away from signal/hero scene
+  // Signal scene spans start: 0 to end: 0.08. Smoothly fade out opacity between 0.03 and 0.08.
+  let cardOpacity = 1;
+  if (sceneId === "signal") {
+    if (progress > 0.02) {
+      cardOpacity = Math.max(0, 1 - (progress - 0.02) / 0.05);
+    }
+  }
+
   return (
-    <div className="pointer-events-none fixed inset-0 z-20 flex items-center justify-start px-6 pt-24 pb-16 md:px-12 lg:px-20">
+    <div
+      className="pointer-events-none fixed inset-0 z-20 flex items-center justify-start px-6 pt-24 pb-16 transition-opacity duration-300 md:px-12 lg:px-20"
+      style={{ opacity: cardOpacity }}
+    >
       <div
         key={scene.id}
         className={cn(
-          "w-full max-w-xl lg:max-w-2xl rounded-xl border border-white/10 bg-[#090b10]/80 p-6 md:p-8 backdrop-blur-md shadow-2xl pointer-events-auto",
+          "w-full max-w-xl lg:max-w-2xl rounded-2xl border border-waran-gold/30 bg-[#07090e]/60 p-6 md:p-8 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] pointer-events-auto transition-all duration-500",
           !reducedMotion && "scene-copy-enter"
         )}
       >

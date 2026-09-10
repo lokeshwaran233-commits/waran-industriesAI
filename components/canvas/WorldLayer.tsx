@@ -43,7 +43,7 @@ export function WorldLayer() {
 
   return (
     <group>
-      <group position={[0, 0.35, 0]} scale={0.85 + a.identity * 0.25}>
+      <group position={[1.4, 0.2, 0]} scale={0.95 + a.identity * 0.35}>
         <HelixMark />
       </group>
       {a.primal > 0.02 ? <PrimalWorld active={a.primal} /> : null}
