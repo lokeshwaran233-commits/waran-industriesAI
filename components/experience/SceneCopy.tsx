@@ -12,39 +12,42 @@ export function SceneCopy() {
   const scene = scenes.find((s) => s.id === sceneId) ?? scenes[0];
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-20 flex items-end px-6 pb-20 pt-28 md:items-center md:px-12 md:pb-0">
+    <div className="pointer-events-none fixed inset-0 z-20 flex items-center justify-start px-6 pt-24 pb-16 md:px-12 lg:px-20">
       <div
         key={scene.id}
-        className={cn("max-w-2xl", !reducedMotion && "scene-copy-enter")}
+        className={cn(
+          "w-full max-w-xl lg:max-w-2xl rounded-xl border border-white/10 bg-[#090b10]/80 p-6 md:p-8 backdrop-blur-md shadow-2xl pointer-events-auto",
+          !reducedMotion && "scene-copy-enter"
+        )}
       >
         <div className="flex items-center gap-3">
-          <span className="font-mono text-xs tracking-[0.3em] text-waran-gold">{scene.chapter}</span>
+          <span className="font-mono text-xs tracking-[0.3em] text-waran-gold font-semibold">{scene.chapter}</span>
           <span className="h-px w-8 bg-waran-gold/40" />
-          <span className="font-mono text-xs tracking-[0.2em] text-waran-paper/50 uppercase">{scene.kicker}</span>
+          <span className="font-mono text-xs tracking-[0.2em] text-waran-paper/60 uppercase">{scene.kicker}</span>
         </div>
 
         {scene.status ? (
-          <div className="mt-4">
+          <div className="mt-3">
             <StatusChip status={scene.status} />
           </div>
         ) : null}
 
-        <h1 className="mt-6 font-display text-4xl tracking-[-0.05em] text-waran-paper leading-[1.1] md:text-7xl font-medium">
+        <h1 className="mt-4 font-display text-2xl tracking-[-0.04em] text-waran-paper sm:text-4xl md:text-5xl font-bold leading-[1.05]">
           {scene.title}
         </h1>
 
-        <div className="mt-6 space-y-1.5 font-mono text-xs tracking-[0.25em] text-waran-goldSoft/90 uppercase">
+        <div className="mt-4 space-y-1 font-mono text-[11px] md:text-xs tracking-[0.22em] text-waran-goldSoft/90 uppercase">
           {scene.lines.map((line) => (
             <p key={line}>— {line}</p>
           ))}
         </div>
 
-        <p className="measure mt-6 text-sm leading-7 text-waran-paper/75 font-light md:text-base">{scene.body}</p>
+        <p className="mt-4 text-xs sm:text-sm leading-relaxed text-waran-paper/80 font-light max-w-xl">{scene.body}</p>
 
         {scene.href ? (
           <Link
             href={scene.href}
-            className="pointer-events-auto mt-8 inline-flex items-center gap-3 border border-waran-gold/40 bg-[#0a0c10]/80 px-5 py-2.5 font-mono text-[10px] tracking-[0.28em] text-waran-gold hover:border-waran-gold hover:bg-waran-gold/10 transition-all duration-300 backdrop-blur-md rounded-xs"
+            className="pointer-events-auto mt-6 inline-flex items-center gap-3 border border-waran-gold/50 bg-waran-gold/10 px-5 py-2.5 font-mono text-[11px] tracking-[0.25em] text-waran-gold hover:border-waran-gold hover:bg-waran-gold/20 transition-all duration-300 rounded-sm"
           >
             ENTER THIS LAYER
             <span aria-hidden>→</span>

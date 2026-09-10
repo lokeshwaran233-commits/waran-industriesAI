@@ -42,7 +42,7 @@ export function HomeExperience() {
       <div className="grain pointer-events-none fixed inset-0 z-10" />
       <SceneCopy />
       <ScrollRail />
-      <div id="waran-scroll" className="relative z-0 h-[220vh] w-full" aria-hidden="true" />
+      <div id="waran-scroll" className="relative z-0 h-[320vh] w-full" aria-hidden="true" />
     </>
   );
 }
