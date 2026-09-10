@@ -8,8 +8,18 @@ export function ScrollRail() {
   const sceneId = useWaranStore((s) => s.sceneId);
   const progress = useWaranStore((s) => s.progress);
 
+  let opacity = 1;
+  let pointerEvents: "auto" | "none" = "auto";
+  if (progress > 0.88) {
+    opacity = Math.max(0, 1 - (progress - 0.88) / 0.08);
+    if (progress > 0.95) pointerEvents = "none";
+  }
+
   return (
-    <aside className="pointer-events-none fixed right-6 top-1/2 -translate-y-1/2 z-30 hidden w-48 lg:block">
+    <aside
+      className="pointer-events-none fixed right-6 top-1/2 -translate-y-1/2 z-30 hidden w-48 lg:block transition-opacity duration-300"
+      style={{ opacity, pointerEvents }}
+    >
       <div className="rounded-xl border border-white/10 bg-[#090b10]/80 p-4 backdrop-blur-md shadow-xl">
         <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
           <span className="font-mono text-[9px] tracking-[0.3em] text-waran-gold uppercase">TRAVERSE</span>

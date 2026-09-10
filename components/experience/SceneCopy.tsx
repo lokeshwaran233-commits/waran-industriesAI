@@ -12,19 +12,21 @@ export function SceneCopy() {
   const reducedMotion = useWaranStore((s) => s.reducedMotion);
   const scene = scenes.find((s) => s.id === sceneId) ?? scenes[0];
 
-  // Calculate local progress for smooth fade-out as user scrolls away from signal/hero scene
-  // Signal scene spans start: 0 to end: 0.08. Smoothly fade out opacity between 0.03 and 0.08.
-  let cardOpacity = 1;
-  if (sceneId === "signal") {
-    if (progress > 0.02) {
-      cardOpacity = Math.max(0, 1 - (progress - 0.02) / 0.05);
+  // Calculate local progress for smooth fade-out as user scrolls past the 3D canvas experience zone (progress > 0.92)
+  let containerOpacity = 1;
+  let pointerEvents: "auto" | "none" = "auto";
+
+  if (progress > 0.88) {
+    containerOpacity = Math.max(0, 1 - (progress - 0.88) / 0.08);
+    if (progress > 0.95) {
+      pointerEvents = "none";
     }
   }
 
   return (
     <div
       className="pointer-events-none fixed inset-0 z-20 flex items-center justify-start px-6 pt-24 pb-16 transition-opacity duration-300 md:px-12 lg:px-20"
-      style={{ opacity: cardOpacity }}
+      style={{ opacity: containerOpacity, pointerEvents }}
     >
       <div
         key={scene.id}

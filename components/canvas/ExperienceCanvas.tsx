@@ -25,6 +25,7 @@ export function ExperienceCanvas() {
   const reducedMotion = useWaranStore((s) => s.reducedMotion);
   const quality = useWaranStore((s) => s.quality);
   const webgl = useWaranStore((s) => s.webgl);
+  const progress = useWaranStore((s) => s.progress);
   const setQuality = useWaranStore((s) => s.setQuality);
   const setWebgl = useWaranStore((s) => s.setWebgl);
   const [ready, setReady] = useState(false);
@@ -39,8 +40,18 @@ export function ExperienceCanvas() {
 
   const dpr: [number, number] = quality === "cinematic" ? [1, 1.75] : quality === "balanced" ? [1, 1.35] : [1, 1];
 
+  let opacity = 1;
+  let pointerEvents: "auto" | "none" = "auto";
+  if (progress > 0.88) {
+    opacity = Math.max(0, 1 - (progress - 0.88) / 0.08);
+    if (progress > 0.95) pointerEvents = "none";
+  }
+
   return (
-    <div className="canvas-container motion-safe-only fixed inset-0 z-0">
+    <div
+      className="canvas-container motion-safe-only fixed inset-0 z-0 transition-opacity duration-300"
+      style={{ opacity, pointerEvents }}
+    >
       <Canvas
         dpr={dpr}
         gl={{ antialias: quality !== "essential", powerPreference: "high-performance", alpha: false }}
